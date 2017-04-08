@@ -19,8 +19,7 @@
 					<th>Details</th>
 				</tr>
 			</thead>
-			<tbody>
-				<!-- 사용자 Request로 수행된 Controller 메소드의 리턴값과 일치해야함. products -->
+			<tbody> <!-- 사용자 Request로 수행된 Controller 메소드의 리턴값과 일치해야함. products -->
 				<c:forEach var="product" items="${products}">
 					<tr>
 						<td><img src="<c:url value="/resources/images/${product.imageFileName}"/>" 
