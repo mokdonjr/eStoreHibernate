@@ -2,77 +2,56 @@ package kr.ac.hansung.cse.dao;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.ac.hansung.cse.model.Product;
 
 @Repository
+@Transactional // 모든 메서드들이 트랜잭션화 된다, AOP (all or nothing)
 public class ProductDao {
 
-	/* 1. JDBC Template에 DataSource를 주입 받는다. */
-	private JdbcTemplate jdbcTemplateObject; // DAO객체는 JdbcTemplate객체를 활용.
-	
 	@Autowired
-	public void setDataSource(DataSource dataSource) { // JdbcTemplate는 DataSource를 주입받은 객체.
-		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
+	private SessionFactory sessionFactory; // hibernate
+	
+	public Product getProductById(int id) {
+
+		Session session = sessionFactory.getCurrentSession(); // 1. Session 생성 (Transactional이기 때문에 openSession 안함)
+		Product product = session.get(Product.class, id); // 2. id에 대한 product를 db에서 얻어옴 (sql문이 없다!)
+
+		// Product product = sessionFactory.getCurrentSession().get(Product.class, id);
+		
+		return product;
 	}
 	
-	/* 2. */
+	@SuppressWarnings({ "deprecation", "unchecked" }) // 경고없앰
 	public List<Product> getProducts(){ // 모든 레코드를 조회
-		String sqlStatement = "select * from product";
-		return jdbcTemplateObject.query(sqlStatement, new ProductMapper());
-//		return jdbcTemplateObject.query(sqlStatement, new RowMapper<Product>() {
-//			@Override
-//			public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
-//				Product product = new Product();
-//				product.setId(rs.getInt("id"));
-//				product.setName(rs.getString("name"));
-//				product.setCategory(rs.getString("category"));
-//				product.setPrice(rs.getInt("price"));
-//				product.setManufacturer(rs.getString("manufacturer"));
-//				product.setUnitInStock(rs.getInt("unitInStock"));
-//				product.setDescription(rs.getString("description"));
-//				return product;
-//			}
-//		});
-	}
-
-	/* 데이터베이스에 insert */ // 나중에 Hibernate로 대체
-	public boolean addProduct(Product product) {
-		String name = product.getName();
-		String category = product.getCategory();
-		int price = product.getPrice();
-		String manufacturer = product.getManufacturer();
-		int unitInStock = product.getUnitInStock();
-		String description = product.getDescription();
-		String imageFileName = product.getImageFileName(); // DB에 imageFileName만 저장
+		Session session = sessionFactory.getCurrentSession(); // 1. Session 생성
+		Query query = session.createQuery("from Product"); // 2. query객체 생성해 HQL문 (Product는 테이블이 아니라 클래스이름!)
+		List<Product> productList = query.list();  // 근데 hql. from Product 안쓰면 어케됨?
 		
-		String sqlStatement = "insert into product "
-				+ "(name, category, price, manufacturer, unitInStock, description, imageFileName) "
-				+ "values (?,?,?,?,?,?,?)";
-		return jdbcTemplateObject.update(sqlStatement, new Object[] {
-			name, category, price, manufacturer, unitInStock, description, imageFileName
-			}) == 1; // update()메서드는 반영된 레코드 개수를 리턴
+		return productList;
 	}
 
-	public boolean deleteProduct(int id) {
-		String sqlStatement = "delete from product where id=?";
-		return jdbcTemplateObject.update(sqlStatement, new Object[] {id}) == 1;
+	public void addProduct(Product product) { // public boolean addProduct(Product product) {
+		Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(product); // 있으면 update 없으면 save
+		session.flush();
 	}
 
-	public Product getProductById(int id) {
-		String sqlStatement = "select * from product where id=?";
-		return jdbcTemplateObject.queryForObject(sqlStatement, new Object[] {id}, new ProductMapper()); // query는 여러 객체, queryForObject는 하나의 객체
+	public void deleteProduct(Product product) { // public boolean deleteProduct(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(product);
+		session.flush();
 	}
 
-	public boolean editProduct(Product product) {
-		String sqlStatement = "update product set name=?, category=?, price=?, manufacturer=?, unitInStock=?"
-				+ ", description=?, imageFileName=? where id=?";
-		return jdbcTemplateObject.update(sqlStatement, new Object[] {product.getName(), product.getCategory(), product.getPrice(), product.getManufacturer()
-				, product.getUnitInStock(), product.getDescription(), product.getImageFileName(), product.getId() }) == 1;
+	public void editProduct(Product product) { // public boolean editProduct(Product product) {
+		Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(product);
+		session.flush();
 	}
 }

@@ -89,9 +89,10 @@ public class AdminController {
 		
 		product.setImageFileName(productImage.getOriginalFilename()); // DB에 ImageFileName저장
 		
-		if(!productService.addProduct(product)) { // 실패시
-			System.out.println("Adding Product cannot be done");
-		}
+		productService.addProduct(product); // hibernate
+		// if(!productService.addProduct(product)) { // 실패시
+			// System.out.println("Adding Product cannot be done");
+		// }
 		/* return /admin/productInventory; <- 여기서는 'products'를 받기 때문에 안된다.
 		 * 위의 getProducts 메서드가 호출이 되어 DB에서 다시 읽어와야하기때문에
 		 * getProducts 메서드로 리다이렉트를 한다. */
@@ -105,16 +106,20 @@ public class AdminController {
 		 * /resources/images/ 에서 따로 삭제해줄 필요가 있다. 
 		 * HttpRequestServlet을 인자로 추가해 동적으로 변하는 루트를 알아내어 삭제 */
 		Product product = productService.getProductById(id);
+		
 		String rootDirectory = request.getSession().getServletContext().getRealPath("/");
 		Path delPath = Paths.get(rootDirectory + "\\resources\\images\\" + product.getImageFileName());
+		
 		if(Files.exists(delPath)) { // 파일이 존재한다면
 			try {
 				Files.delete(delPath);
 			} catch (IOException e) { e.printStackTrace(); }
 		}
-		if(!productService.deleteProductById(id)) {
-			System.out.println("Deleting Product cannot be done");
-		}
+		
+		productService.deleteProductById(product); // hibernate
+		// if(!productService.deleteProductById(id)) {
+			// System.out.println("Deleting Product cannot be done");
+		// }
 		
 		return "redirect:/admin/productInventory";
 	}
@@ -165,9 +170,10 @@ public class AdminController {
 		
 		product.setImageFileName(productImage.getOriginalFilename()); // DB에 ImageFileName저장
 
-		if(!productService.editProduct(product)) {
-			System.out.println("Editing product cannot be done");
-		}
+		productService.editProduct(product); // hibernate
+		// if(!productService.editProduct(product)) {
+			// System.out.println("Editing product cannot be done");
+		// }
 		return "redirect:/admin/productInventory";
 	}
 }

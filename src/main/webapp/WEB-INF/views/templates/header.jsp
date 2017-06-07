@@ -19,8 +19,8 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="<c:url value="/"/>">Home</a></li>
-						<li><a href="<c:url value="/products"/>">Products</a></li>
+						<li><a href="<c:url value="/"/>">Home</a></li>
+						<li class="active"><a href="<c:url value="/products"/>">Products</a></li>
 						<li><a href="<c:url value="/contact"/>">Contact</a></li>
 						<li class="dropdown"><a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -41,6 +41,9 @@
 						
 							<!-- 인증(Authentication)이 되어있는 경우 -->
 							<li><a>Welcome: ${pageContext.request.userPrincipal.name}</a></li>
+								<c:if test="${pageContext.request.userPrincipal.name != 'admin'}">
+									<li><a href="<c:url value="/cart"/>">Cart</a></li>
+								</c:if>
 								<c:if test="${pageContext.request.userPrincipal.name == 'admin'}">
 									<li><a href="<c:url value="/admin"/>">Admin Page</a></li>
 								</c:if>
@@ -50,6 +53,7 @@
 						<c:if test="${pageContext.request.userPrincipal.name == null}">
 							<!-- security-context.xml의 권한을 검사하는 login-page의 url을 작성 -->
 							<li><a href="<c:url value="/login"/>">Login</a></li>
+							<li><a href="<c:url value="/register"/>">Register</a></li>
 						</c:if>
 					</ul>
 					

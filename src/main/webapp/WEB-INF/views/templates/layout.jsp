@@ -12,6 +12,12 @@
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<meta name="description" content="">
 	<meta name="author" content="">
+	
+	<!-- csrf 토큰 -->
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+	
 	<link rel="icon" href="<c:url value="/resources/images/icon_seungchan_my_estore.ico"/>">
 	<title><tiles:insertAttribute name="title"/></title>
 
@@ -23,8 +29,14 @@
 	<link href="<c:url value="/resources/css/main.css"/>" rel="stylesheet">
 	
 	<!-- Placed at the end of the document so the pages load faster -->
+	<!-- JQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	
+	<!-- Bootstrap -->
 	<script src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
+	
+	<!-- AngularJS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 </head>
 <body>
 	<div>

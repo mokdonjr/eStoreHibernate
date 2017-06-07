@@ -11,7 +11,15 @@
 		infrastructure -->
 
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<annotation-driven />
+	<!-- Controller에서 로그인한 사용자가 누구인지 파악 (spring security)
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); -->
+	<annotation-driven>
+		<argument-resolvers>
+			<beans:bean
+				class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver">
+			</beans:bean>
+		</argument-resolvers>
+	</annotation-driven>
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->

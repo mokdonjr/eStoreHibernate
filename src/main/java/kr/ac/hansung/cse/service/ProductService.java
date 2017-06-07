@@ -19,19 +19,20 @@ public class ProductService {
 		return productDao.getProducts();
 	}
 	
-	public boolean addProduct(Product product) {
-		return productDao.addProduct(product);
+
+	public void addProduct(Product product) { // public boolean addProduct(Product product) {
+		productDao.addProduct(product); // return productDao.addProduct(product);
 	}
 
-	public boolean deleteProductById(int id) {
-		return productDao.deleteProduct(id);
+	public void deleteProductById(Product product) { // public boolean deleteProductById(int id) {
+		productDao.deleteProduct(product); // return productDao.deleteProduct(id);
 	}
 
 	public Product getProductById(int id) {
 		return productDao.getProductById(id);
 	}
 
-	public boolean editProduct(Product product) {
-		return productDao.editProduct(product);
+	public void editProduct(Product product) { // public boolean editProduct(Product product) {
+		productDao.editProduct(product); // return productDao.editProduct(product);
 	}
 }
